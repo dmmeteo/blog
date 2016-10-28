@@ -2,5 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', 'blog.views.home', name='home'),
+    url(r'^$', views.post_list, name='post_list'),
+    # url(r'^posts$', views.post_list, name='post_list')
 ]
