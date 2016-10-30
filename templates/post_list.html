@@ -2,10 +2,16 @@
 
 {% block content %}
 	{% for post in posts %}
-		<div>
-			<h4><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h4>
-			<p>{{ post.text|linebreaksbr }}</p>
-			<p>published: {{ post.published_date }}</p>
+		<div class="post-preview">
+			<a href="{% url 'post_detail' pk=post.pk %}">
+				<h2 class="post-title">
+					{{ post.title }}
+				</h2>
+				<h3 class="post-subtitle">
+					{{ post.text|linebreaksbr }}
+				</h3>
+			</a>
+			<p class="post-meta">Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}</p>
 		</div>
 	{% endfor %}
 {% endblock content %}
