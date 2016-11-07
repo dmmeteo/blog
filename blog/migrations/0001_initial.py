@@ -14,14 +14,29 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Comment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('author', models.CharField(max_length=200)),
+                ('text', models.TextField()),
+                ('email', models.EmailField(max_length=254)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Post',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=200)),
                 ('text', models.TextField()),
+                ('likes', models.IntegerField(default=0)),
                 ('created_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('published_date', models.DateTimeField(null=True, blank=True)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(default=b'auth.User', to=settings.AUTH_USER_MODEL)),
             ],
+        ),
+        migrations.AddField(
+            model_name='comment',
+            name='post',
+            field=models.ForeignKey(to='blog.Post'),
         ),
     ]
