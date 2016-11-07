@@ -2,7 +2,8 @@
 
 {% block content %}
 	<p>Add new post</p>
-	<form method="POST" class="post-form">{% csrf_token %}
+	<form method="POST" class="post-form">
+		{% csrf_token %}
 		{{ form.as_p }}
 		<div class="row">
 			<div class="form-group col-xs-12">

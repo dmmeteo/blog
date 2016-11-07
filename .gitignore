@@ -24,4 +24,4 @@ lib/
 local/
 .DS_STORE
 .Python
-.pyc
+*.pyc

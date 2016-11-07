@@ -27,7 +27,16 @@ class Comment(models.Model):
 	text = models.TextField()
 	email = models.EmailField()
 	post = models.ForeignKey(Post)
+	created_date = models.DateTimeField(default=timezone.now)
 
 	# return string text
 	def __str__(self):
 		return self.text
+
+
+#class Category
+#	title
+#	text
+#class Tags
+#	title
+
