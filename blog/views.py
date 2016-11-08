@@ -28,7 +28,7 @@ def post_detail(request, pk):
 	else:
 		#if a GET (or any other method) create a blank form
 		form = CommentForm()
-	return render(request, 'post_detail.html', {'post': post,'comments': comments, 'form': form})
+	return render(request, 'post_detail.html', {'post': post, 'comments': comments, 'form': form})
 
 def post_new(request):
 	# Create form to add new posts
@@ -62,3 +62,11 @@ def post_edit(request, pk):
 	else:
 		form = PostForm(instance=post)
 		return render(request, 'post_edit.html', {'form': form})
+
+def add_like(request, pk):
+	# try Post
+	post = get_object_or_404(Post, pk=pk)
+	# add like
+	post.likes += 1
+	post.save()
+	return redirect('blog.views.post_detail', pk=pk)

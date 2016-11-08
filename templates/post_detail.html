@@ -3,65 +3,66 @@
 {% block content %}
 	<div class="post-preview">
 		<!-- post view -->
-		<h4>{{ post.title }}
+		<h4>
 			{% if user.is_authenticated %}
-				<a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}">
+				<a class="btn btn-default" style="float: right; margin-top: -20px" href="{% url 'post_edit' pk=post.pk %}">
 					<span class="glyphicon glyphicon-pencil"></span> edit
 				</a>
 			{% endif %}
+			{{ post.title }}
 		</h4>
 		<p>{{ post.text }}</p>
 		{% if post.published_date %}
-			<p class="post-meta">
-				<a class="btn btn-default" href="#">
-					<span class="glyphicon glyphicon-thumbs-up"></span> {{ post.likes }}
-				</a>
+			<p class="post-meta"  style="float: left; margin-top: 20px">
 				Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}
 			</p>
+			<h4 style="float: right">
+				<a class="btn btn-success" href="{% url 'add_like' pk=post.pk %}"> <!-- Hear likes link -->
+					<span class="glyphicon glyphicon-thumbs-up"></span> {{ post.likes }}
+				</a>
+			</h4><br><br><br>
+
+			<!-- comment view -->
+			{% for comment in comments %}
+				<blockquote>
+					<h5>
+						author: {{ comment.author }} email: {{ comment.email }} date: {{comment.created_date}}
+					</h5>
+					{{ comment.text }}
+				</blockquote>
+			{% endfor %}
+
+			<!-- comment form -->
+			<p>Add your comment hear:</p>
+			<form method="POST" class="comment-form">
+				{% csrf_token %}
+				<div class="row control-group">
+					<div class="form-group col-xs-12 floating-label-form-group controls">
+						<label>Name</label>
+						{{ form.author.errors }}
+						{{ form.author }}
+					</div>
+				</div>
+				<div class="row control-group">
+					<div class="form-group col-xs-12 floating-label-form-group controls">
+						<label>Email</label>
+						{{ form.email.errors }}
+						{{ form.email }}
+					</div>
+				</div>
+				<div class="row control-group">
+					<div class="form-group col-xs-12 floating-label-form-group controls">
+						<label>Comment</label>
+						{{ form.text.errors }}
+						{{ form.text }}
+					</div>
+				</div><br>
+				<div class="row">
+					<div class="form-group col-xs-12">
+						<button type="submit" class="btn btn-primary" style="width: 100%">Send</button>
+					</div>
+				</div>
+			</form>
 		{% endif %}
-
-		<!-- comment form -->
-		<form method="POST" class="comment-form">
-			{% csrf_token %}
-			<div class="row control-group">
-				<div class="form-group col-xs-12 floating-label-form-group controls">
-					<label>Name</label>
-					{{ form.author.errors }}
-					{{ form.author }}
-					<p class="help-block text-danger"></p>
-				</div>
-			</div>
-			<div class="row control-group">
-				<div class="form-group col-xs-12 floating-label-form-group controls">
-					<label>Email</label>
-					{{ form.email.errors }}
-					{{ form.email }}
-					<p class="help-block text-danger"></p>
-				</div>
-			</div>
-			<div class="row control-group">
-				<div class="form-group col-xs-12 floating-label-form-group controls">
-					<label>Comment</label>
-					{{ form.text.errors }}
-					{{ form.text }}
-					<p class="help-block text-danger"></p>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-xs-12">
-					<button type="submit" class="btn btn-default" style="width: 100%">Send</button>
-				</div>
-			</div>
-		</form>
-
-		<!-- comment view -->
-		{% for comment in comments %}
-			<blockquote>
-				<h5>
-					author: {{ comment.author }} email: {{ comment.email }} date: {{comment.created_date}}
-				</h5>
-				{{ comment.text }}
-			</blockquote>
-		{% endfor %}
 	</div>
 {% endblock content %}
