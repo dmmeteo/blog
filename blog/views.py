@@ -67,6 +67,10 @@ def add_like(request, pk):
 	# try Post
 	post = get_object_or_404(Post, pk=pk)
 	# add like
-	post.likes += 1
-	post.save()
+	if ('pause' not in request.session) or (request.session['pk'] != pk):
+		post.likes += 1
+		post.save()
+		request.session.set_expiry(60*5)
+		request.session['pause'] = True
+		request.session['pk'] = pk
 	return redirect('blog.views.post_detail', pk=pk)
