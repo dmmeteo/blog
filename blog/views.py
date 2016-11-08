@@ -5,12 +5,20 @@ from .models import *
 
 # Create view list of posts
 def post_list(request):
+	categories = Category.objects.order_by('-pk')
 	# Get post list which published_date not empty
 	# and order by published_date
 	posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-	return render(request, 'post_list.html', {'posts': posts})
+	return render(request, 'post_list.html', {'posts': posts, 'categories':categories})
+
+def category_list(request, pk):
+	categories = Category.objects.order_by('-pk')
+	category = get_object_or_404(Category, pk=pk)
+	posts = Post.objects.filter(category=pk, published_date__lte=timezone.now()).order_by('-published_date')
+	return render(request, 'post_list.html', {'posts': posts, 'categories':categories})
 
 def post_detail(request, pk):
+	categories = Category.objects.order_by('-pk')
 	# Get post by primary_key(pk) or 404
 	post = get_object_or_404(Post, pk=pk)
 	comments = Comment.objects.filter(post=pk).order_by('-created_date')
@@ -28,7 +36,10 @@ def post_detail(request, pk):
 	else:
 		#if a GET (or any other method) create a blank form
 		form = CommentForm()
-	return render(request, 'post_detail.html', {'post': post, 'comments': comments, 'form': form})
+	return render(request, 'post_detail.html', {'post': post,
+												'comments': comments,
+												'form': form,
+												'categories':categories})
 
 def post_new(request):
 	# Create form to add new posts
@@ -62,6 +73,20 @@ def post_edit(request, pk):
 	else:
 		form = PostForm(instance=post)
 		return render(request, 'post_edit.html', {'form': form})
+
+def category_new(request):
+	if request.method == 'POST':
+		#create a form post:
+		form = CategoryForm(request.POST)
+		#check whether it's valid:
+		if form.is_valid():
+			post = form.save(commit=False)
+			post.save()
+			return redirect('/')
+	else:
+		#if a GET (or any other method) create a blank form
+		form = CategoryForm()
+	return render(request, 'category_edit.html', {'form': form})
 
 def add_like(request, pk):
 	# try Post

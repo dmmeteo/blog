@@ -4,7 +4,8 @@ from django.utils import timezone
 # Create model Category
 class Category(models.Model):
 	# create fields
-	title = title = models.CharField(max_length=200)
+	title = models.CharField(max_length=200)
+	discript = models.TextField(blank=True, null=True)
 	# file = FileField()
 
 	# return string title
@@ -14,8 +15,8 @@ class Category(models.Model):
 # Create models Post
 class Post(models.Model):
 	# create fields
-	#category = models.ForeignKey(Category)
 	author = models.ForeignKey('auth.User', default='auth.User')
+	category = models.ForeignKey(Category)
 	title = models.CharField(max_length=200)
 	text = models.TextField()
 	likes = models.IntegerField(default=0)
@@ -43,11 +44,4 @@ class Comment(models.Model):
 	# return string text
 	def __str__(self):
 		return self.text
-
-
-#class Category
-#	title
-#	file
-#class Tags
-#	title
 

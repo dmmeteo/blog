@@ -36,6 +36,8 @@
 			<p>Add your comment hear:</p>
 			<form method="POST" class="comment-form">
 				{% csrf_token %}
+
+
 				<div class="row control-group">
 					<div class="form-group col-xs-12 floating-label-form-group controls">
 						<label>Name</label>
@@ -50,6 +52,8 @@
 						{{ form.email }}
 					</div>
 				</div>
+
+
 				<div class="row control-group">
 					<div class="form-group col-xs-12 floating-label-form-group controls">
 						<label>Comment</label>
