@@ -20,4 +20,8 @@ urlpatterns = [
 
 	# likes
 	url(r'^post/(?P<pk>[0-9]+)/like/$', views.add_like, name='add_like'),
+
+	# auth
+	url(r'^login/$', views.login, name='login'),
+	url(r'^logout/$', views.logout, name='logout'),
 ]

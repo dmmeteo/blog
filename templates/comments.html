@@ -1,0 +1,46 @@
+<!-- comment view -->
+{% for comment in comments %}
+	<blockquote>
+		Commented by <b>{{ comment.author }}</b> on {{comment.created_date}}
+		<br><b>{{ comment.email }}</b>
+		<p>
+			{{ comment.text }}
+		</p>
+	</blockquote>
+{% endfor %}
+
+<!-- comment form -->
+<p>Add your comment hear:</p>
+<form method="POST" class="comment-form">
+	{% csrf_token %}
+
+
+	<div class="row control-group">
+		<div class="form-group col-xs-12 floating-label-form-group controls">
+			<label>Name</label>
+			{{ form.author.errors }}
+			{{ form.author }}
+		</div>
+	</div>
+	<div class="row control-group">
+		<div class="form-group col-xs-12 floating-label-form-group controls">
+			<label>Email</label>
+			{{ form.email.errors }}
+			{{ form.email }}
+		</div>
+	</div>
+
+
+	<div class="row control-group">
+		<div class="form-group col-xs-12 floating-label-form-group controls">
+			<label>Comment</label>
+			{{ form.text.errors }}
+			{{ form.text }}
+		</div>
+	</div><br>
+	<div class="row">
+		<div class="form-group col-xs-12">
+			<button type="submit" class="btn btn-primary" style="width: 100%">Send</button>
+		</div>
+	</div>
+</form>

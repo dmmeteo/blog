@@ -23,6 +23,7 @@ class CommentForm(forms.ModelForm):
 		fields = ['author', 'email', 'text']
 		widgets = {
 					'author': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name'}),
-					'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+					'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}),
 					'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Comment'}),
 				}
+

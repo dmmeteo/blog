@@ -6,6 +6,10 @@ class CategoryAdmin(admin.ModelAdmin):
 	fields = ['title', 'discript']
 
 # class for comments in admin
+class CommentAdmin(admin.ModelAdmin):
+	fields = ['author','text','email','post','created_date']
+	list_filter = ['created_date','post']
+
 class PostInline(admin.StackedInline):
 	model = Comment
 	extra = 2
@@ -18,5 +22,5 @@ class PostAdmin(admin.ModelAdmin):
 
 # Register models
 admin.site.register(Post, PostAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Category, CategoryAdmin)
