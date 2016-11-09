@@ -1,6 +1,18 @@
 <!-- comment view -->
 {% for comment in comments %}
 	<blockquote>
+			{% if user.is_authenticated %}
+				<div style="float: right">
+					<a href="{% url 'comment_edit' pk=comment.pk %}"
+					class="btn btn-default">
+						<span class="glyphicon glyphicon-pencil"></span>
+					</a>
+					<a href="{% url 'comment_delete' pk=comment.pk %}"
+					class="btn btn-default">
+						<span class="glyphicon glyphicon-remove"></span>
+					</a>
+				</div>
+			{% endif %}
 		Commented by <b>{{ comment.author }}</b> on {{comment.created_date}}
 		<br><b>{{ comment.email }}</b>
 		<p>
@@ -14,21 +26,22 @@
 <form method="POST" class="comment-form">
 	{% csrf_token %}
 
-
-	<div class="row control-group">
-		<div class="form-group col-xs-12 floating-label-form-group controls">
-			<label>Name</label>
-			{{ form.author.errors }}
-			{{ form.author }}
+	{% if not user.is_authenticated %}
+		<div class="row control-group">
+			<div class="form-group col-xs-12 floating-label-form-group controls">
+				<label>Name</label>
+				{{ form.author.errors }}
+				{{ form.author }}
+			</div>
 		</div>
-	</div>
-	<div class="row control-group">
-		<div class="form-group col-xs-12 floating-label-form-group controls">
-			<label>Email</label>
-			{{ form.email.errors }}
-			{{ form.email }}
+		<div class="row control-group">
+			<div class="form-group col-xs-12 floating-label-form-group controls">
+				<label>Email</label>
+				{{ form.email.errors }}
+				{{ form.email }}
+			</div>
 		</div>
-	</div>
+	{% endif %}
 
 
 	<div class="row control-group">

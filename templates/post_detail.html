@@ -5,9 +5,14 @@
 		<!-- post view -->
 		<h4>
 			{% if user.is_authenticated %}
-				<a class="btn btn-default" style="float: right; margin-top: -20px" href="{% url 'post_edit' pk=post.pk %}">
-					<span class="glyphicon glyphicon-pencil"></span> edit
+			<div style="float: right; margin-top: -20px">
+				<a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}">
+					<span class="glyphicon glyphicon-pencil"></span>
 				</a>
+				<a class="btn btn-danger" href="{% url 'post_delete' pk=post.pk %}">
+					<span class="glyphicon glyphicon-remove"></span>
+				</a>
+			</div>
 			{% endif %}
 			{{ post.title }}
 		</h4>

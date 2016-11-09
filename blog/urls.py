@@ -17,6 +17,16 @@ urlpatterns = [
 	# edit post
 	url(r'^post/(?P<pk>[0-9]+)/edit/$', views.post_edit, name='post_edit'),
 	# edit category
+	#url(r'^category/(?P<pk>[0-9]+)/edit/$', views.category_edit, name='category_edit'),
+	# edit comment
+	url(r'^comment/(?P<pk>[0-9]+)/edit/$', views.comment_edit, name='comment_edit'),
+
+	# delete post
+	url(r'^post/(?P<pk>[0-9]+)/delete/$', views.post_delete, name='post_delete'),
+	# delete category
+	#url(r'^category/(?P<pk>[0-9]+)/delete/$', views.category_delete, name='category_delete'),
+	# delete comment
+	url(r'^comment/(?P<pk>[0-9]+)/delete/$', views.comment_delete, name='comment_delete'),
 
 	# likes
 	url(r'^post/(?P<pk>[0-9]+)/like/$', views.add_like, name='add_like'),

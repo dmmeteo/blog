@@ -20,6 +20,8 @@ class Post(models.Model):
 	title = models.CharField(max_length=200)
 	text = models.TextField()
 	likes = models.IntegerField(default=0)
+	views = models.IntegerField(default=0)
+	comments = models.IntegerField(default=0)
 	created_date = models.DateTimeField(default=timezone.now)
 	published_date = models.DateTimeField(blank=True, null=True)
 
@@ -35,9 +37,9 @@ class Post(models.Model):
 # Create model Comments
 class Comment(models.Model):
 	# crete fields
-	author = models.CharField(max_length=200)
+	author = models.CharField(max_length=200, blank=True, null=True)
+	email = models.EmailField(blank=True, null=True)
 	text = models.TextField()
-	email = models.EmailField()
 	post = models.ForeignKey(Post)
 	created_date = models.DateTimeField(default=timezone.now)
 
