@@ -1,34 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<div class="post-preview">
-		<!-- post view -->
-		<h4>
-			{% if user.is_authenticated %}
-			<div style="float: right; margin-top: -20px">
-				<a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}">
-					<span class="glyphicon glyphicon-pencil"></span>
-				</a>
-				<a class="btn btn-danger" href="{% url 'post_delete' pk=post.pk %}">
-					<span class="glyphicon glyphicon-remove"></span>
-				</a>
-			</div>
-			{% endif %}
-			{{ post.title }}
-		</h4>
-		<p>{{ post.text }}</p>
-		{% if post.published_date %}
-			<p class="post-meta"  style="float: left; margin-top: 20px">
-				Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}
-			</p>
-			<h4 style="float: right">
-				<a class="btn btn-success" href="{% url 'add_like' pk=post.pk %}"> <!-- Hear likes link -->
-					<span class="glyphicon glyphicon-thumbs-up"></span> {{ post.likes }}
-				</a>
-			</h4><br><br><br>
+    <div class="post-preview">
+        <!-- post view -->
+        <h4>
+            {% if user.is_authenticated %}
+            <div style="float: right; margin-top: -20px">
+                <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="btn btn-danger" href="{% url 'post_delete' pk=post.pk %}">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </div>
+            {% endif %}
+            {{ post.title }}
+        </h4>
+        <p>{{ post.text }}</p>
+        {% if post.published_date %}
+            <p class="post-meta"  style="float: left; margin-top: 20px">
+                Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}
+                <span style="margin-left: 20px" class="glyphicon glyphicon-eye-open"></span> {{ post.views }}
+                <span style="margin-left: 20px" class="glyphicon glyphicon-bullhorn"></span> {{ post.comments }}
+            </p>
+            <h4 style="float: right">
+                <a class="btn btn-success" href="{% url 'add_like' pk=post.pk %}"> <!-- Hear likes link -->
+                    <span class="glyphicon glyphicon-thumbs-up"></span> {{ post.likes }}
+                </a>
+            </h4><br><br><br>
 
-			{% include "comments.html" %}
+            {% include "comments.html" %}
 
-		{% endif %}
-	</div>
+        {% endif %}
+    </div>
 {% endblock content %}

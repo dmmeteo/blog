@@ -1,5 +1,6 @@
 from django import forms
 from .models import Category, Post, Comment
+from django.contrib.auth.models import User
 
 # Create Category form
 class CategoryForm(forms.ModelForm):
@@ -41,3 +42,6 @@ class LoginForm(forms.Form):
 	username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
 
+class RegisterForm(forms.ModelForm):
+    model = User
+    fields = ['username','password1','password2']

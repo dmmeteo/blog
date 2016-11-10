@@ -3,7 +3,7 @@
 {% block content %}
 
 	{% if form.errors or auth_error %}
-		<p style="color: red">Please enter the correct username and password</p>
+		<p style="color: red">Please enter the correct username and password. {{ auth_error }}</p>
 	{% endif %}
 
 	<form action="{% url 'blog.views.login' %}" method="POST" class="login-form">
@@ -12,22 +12,25 @@
 		<div class="row control-group">
 			<div class="form-group col-xs-12 floating-label-form-group controls">
 				<label>Username</label>
-				{{ form.username.error }}
+				{{ form.username.errors }}
 				{{ form.username }}
 			</div>
 		</div>
 		<div class="row control-group">
 			<div class="form-group col-xs-12 floating-label-form-group controls">
 				<label>Password</label>
-				{{ form.password.error }}
+				{{ form.password.errors }}
 				{{ form.password }}
 			</div>
 		</div>
 		<br>
 		<div class="row">
-			<div class="form-group col-xs-12">
-				<button type="submit" class="btn btn-primary" style="width: 100%">Sign in</button>
-			</div>
+			<div class="form-group col-xs-6">
+				<button type="submit" class="btn btn-success" style="width: 100%">Sign in</button>
+            </div>
+            <div class="form-group col-xs-6">
+                <a class="btn btn-primary" style="width: 100%" href="{% url 'register' %}">Register</a>
+            </div>
 		</div>
 	</form>
 

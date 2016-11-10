@@ -1,56 +1,58 @@
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-	<div class="container-fluid">
-		<!-- Brand and toggle get grouped for better mobile display -->
-		<div class="navbar-header page-scroll">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-				<span class="sr-only">Toggle navigation</span>
-				Menu <i class="fa fa-bars"></i>
-			</button>
-			<a class="navbar-brand" href="/">Blog</a>
-			<p class="navbar-text">Signed in as Mark Otto</p>
-		</div>
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                Menu <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="/">Blog</a>
+            {% if user.is_authenticated and user.is_superuser %}
+                <p class="navbar-text">You are in Admin Mode</p>
+            {% endif %}
+        </div>
 
-		<!-- Collect the nav links, forms, and other content for toggling -->
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav navbar-right">
-				<li>
-					<a href="/">Home</a>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></a>
-					<ul class="dropdown-menu" style="background-color: rgba(255,255,255,.8)">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">Home</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="background-color: rgba(255,255,255,.8)">
 
-					<!-- all categories -->
-						{% for category in categories %}
-							<li>
-								<a style="color: #333" href="{% url 'category_list' pk=category.pk %}">{{ category.title }}</a>
-							</li>
-						{% endfor %}
-					<!-- create new category -->
-						{% if user.is_authenticated %}
-							<li role="separator" class="divider"></li>
-							<li><a style="color: #333" href="{% url 'blog.views.category_new' %}"><span class="glyphicon glyphicon-plus"></span> New Category</a></li>
-						{% endif %}
+                    <!-- all categories -->
+                        {% for category in categories %}
+                            <li>
+                                <a style="color: #333" href="{% url 'category_list' pk=category.pk %}">{{ category.title }}</a>
+                            </li>
+                        {% endfor %}
+                    <!-- create new category -->
+                        {% if user.is_authenticated %}
+                            <li role="separator" class="divider"></li>
+                            <li><a style="color: #333" href="{% url 'blog.views.category_new' %}"><span class="glyphicon glyphicon-plus"></span> New Category</a></li>
+                        {% endif %}
 
-					</ul>
-				</li>
-			<!-- add new post link -->
-				{% if user.is_authenticated %}
-					<li>
-						<a href="{% url 'blog.views.post_new' %}">New Post</a>
-					</li>
-				{% endif %}
-				<li>
-					{% if user.is_authenticated %}
-						<a href="{% url 'blog.views.logout' %}">Sign out ({{ username }})</a>
-					{% else %}
-						<a href="{% url 'blog.views.login' %}">Sign in</a>
-					{% endif %}
-				</li>
-			</ul>
-		</div>
-		<!-- /.navbar-collapse -->
-	</div>
-	<!-- /.container -->
+                    </ul>
+                </li>
+            <!-- add new post link -->
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'blog.views.post_new' %}">New Post</a>
+                    </li>
+                {% endif %}
+                <li>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'blog.views.logout' %}">Sign out ({{ user.username }})</a>
+                    {% else %}
+                        <a href="{% url 'blog.views.login' %}">Sign in</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
 </nav>
