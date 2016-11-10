@@ -1,10 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
-from django.contrib.auth.forms import UserCreationForm
 from .forms import *
 from .models import *
 
@@ -12,13 +10,14 @@ from .models import *
 CATEGORIES = Category.objects.order_by('pk')
 
 # Create view list of posts
+@render_to('post_list.html')
 def post_list(request):
     # Get post list which published_date not empty
     # and order by published_date
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-    return render(request, 'post_list.html', {'posts': posts,
-                                            'categories':CATEGORIES})
+    return {'posts': posts, 'categories':CATEGORIES}
 
+@render_to('post_detail.html')
 def post_detail(request, pk):
     user = auth.get_user(request)
     # Get post by primary_key(pk) or 404
@@ -44,10 +43,10 @@ def post_detail(request, pk):
             comment.post = post
             comment.save()
             return redirect('blog.views.post_detail', pk=pk)
-    return render(request, 'post_detail.html', {'post': post,
-                                                'comments': comments,
-                                                'form': form,
-                                                'categories':CATEGORIES})
+    return {'post': post,
+            'comments': comments,
+            'form': form,
+            'categories':CATEGORIES}
 
 @login_required()
 @render_to('post_edit.html')
@@ -70,6 +69,8 @@ def post_new(request):
     return {'form': form,
             'categories':CATEGORIES}
 
+@login_required()
+@render_to('post_edit.html')
 def post_edit(request, pk):
     # Create form to edit post
     post = get_object_or_404(Post, pk=pk)
@@ -83,9 +84,9 @@ def post_edit(request, pk):
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
-        return render(request, 'post_edit.html', {'form': form,
-                                                'categories':CATEGORIES})
+        return {'form': form, 'categories':CATEGORIES}
 
+@login_required()
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     category = post.category.id
@@ -93,6 +94,8 @@ def post_delete(request, pk):
     return redirect('blog.views.category_list', pk=category)
 
 # Create views for comments
+@login_required()
+@render_to('comment_edit.html')
 def comment_edit(request, pk):
     # Create form to edit comment
     comment = get_object_or_404(Comment, pk=pk)
@@ -104,9 +107,9 @@ def comment_edit(request, pk):
             return redirect('blog.views.post_detail', pk=comment.post.id)
     else:
         form = CommentForm(instance=comment)
-        return render(request, 'comment_edit.html', {'form': form,
-                                                'categories':CATEGORIES})
+        return {'form': form, 'categories':CATEGORIES}
 
+@login_required()
 def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     post = comment.post.id
@@ -114,14 +117,15 @@ def comment_delete(request, pk):
     return redirect('blog.views.post_detail', pk=post)
 
 # Create view list of catgory
-# @render_to('')
+@render_to('post_list.html')
 def category_list(request, pk):
     # Get category by pk
     category = get_object_or_404(Category, pk=pk)
     posts = Post.objects.filter(category=pk, published_date__lte=timezone.now()).order_by('-published_date')
-    return render(request, 'post_list.html', {'posts': posts,
-                                            'categories':CATEGORIES})
+    return {'posts': posts, 'category': category, 'categories':CATEGORIES}
 
+@login_required()
+@render_to('category_edit.html')
 def category_new(request):
     # try post request
     form = CategoryForm(request.POST or None)
@@ -132,8 +136,7 @@ def category_new(request):
             category = form.save(commit=False)
             category.save()
             return redirect('blog.views.category_list', pk=category.pk)
-    return render(request, 'category_edit.html', {'form': form,
-                                                'categories':CATEGORIES})
+    return {'form': form, 'categories':CATEGORIES}
 
 # function for add likes
 def add_like(request, pk):
@@ -149,6 +152,7 @@ def add_like(request, pk):
     return redirect('blog.views.post_detail', pk=pk)
 
 # auth
+@render_to('login.html')
 def login(request):
     # create form
     form = LoginForm(request.POST or None)
@@ -163,25 +167,37 @@ def login(request):
                 return redirect('/')
             else:
                 auth_error = 'User is not defined'
-                return render(request, 'login.html', {'form':form, 'auth_error': auth_error, 'categories':CATEGORIES})
+                return {'form':form, 'auth_error': auth_error, 'categories':CATEGORIES}
         else:
-            return render(request, 'login.html', {'form':form, 'categories':CATEGORIES})
+            return {'form':form, 'categories':CATEGORIES}
     else:
-        return render(request, 'login.html', {'form':form, 'categories':CATEGORIES})
+        return {'form':form, 'categories':CATEGORIES}
 
+@render_to('register.html')
 def register(request):
-    form = UserCreationForm(request.POST or None)
+    form = RegisterForm(request.POST or None)
     if request.method == 'POST':
-        #create a form category:
-        #check whether it's valid:
         if form.is_valid():
-            # category = form.save(commit=False)
             form.save()
-            return redirect('blog.views.login')
-    return render(request, 'register.html', {'form': form,
-                                            'categories':CATEGORIES})
+            user = auth.authenticate(username=request.POST['username'],
+                                     password=request.POST['password'])
+            auth.login(request, user)
+            return redirect('/')
+    return {'form': form, 'categories':CATEGORIES}
+
+@login_required()
+@render_to('password_change.html')
+def password_change(request):
+    form = PassChangeForm(user=request.user, data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            message_success = True
+            return {'message_success': message_success, 'categories':CATEGORIES}
+        else:
+            return {'form': form, 'categories':CATEGORIES}
+    return {'form': form, 'categories':CATEGORIES}
 
 def logout(request):
     auth.logout(request)
     return redirect('blog.views.login')
-

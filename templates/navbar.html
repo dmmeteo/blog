@@ -9,7 +9,9 @@
             </button>
             <a class="navbar-brand" href="/">Blog</a>
             {% if user.is_authenticated and user.is_superuser %}
-                <p class="navbar-text">You are in Admin Mode</p>
+                <p class="navbar-text">You are in Admin Mode, {{ user.username }}</p>
+            {% elif user.is_authenticated and not user.is_superuser %}
+                <p class="navbar-text">Hello, {{ user.username }}</p>
             {% endif %}
         </div>
 
@@ -21,7 +23,7 @@
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></a>
-                    <ul class="dropdown-menu" style="background-color: rgba(255,255,255,.8)">
+                    <ul class="dropdown-menu">
 
                     <!-- all categories -->
                         {% for category in categories %}
@@ -30,22 +32,38 @@
                             </li>
                         {% endfor %}
                     <!-- create new category -->
-                        {% if user.is_authenticated %}
+                        {% if user.is_authenticated and user.is_superuser %}
                             <li role="separator" class="divider"></li>
                             <li><a style="color: #333" href="{% url 'blog.views.category_new' %}"><span class="glyphicon glyphicon-plus"></span> New Category</a></li>
                         {% endif %}
 
                     </ul>
                 </li>
-            <!-- add new post link -->
-                {% if user.is_authenticated %}
+                <!-- add new post link -->
+                {% if user.is_authenticated and user.is_superuser %}
                     <li>
                         <a href="{% url 'blog.views.post_new' %}">New Post</a>
                     </li>
                 {% endif %}
                 <li>
+                    <!-- User menu -->
                     {% if user.is_authenticated %}
-                        <a href="{% url 'blog.views.logout' %}">Sign out ({{ user.username }})</a>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User <span class="glyphicon glyphicon-user"></span></a>
+                            <ul class="dropdown-menu">
+                            <!-- user options -->
+                                <li>
+                                    <a style="color: #333" href="{% url 'blog.views.password_change' %}">
+                                        Change password <span class="glyphicon glyphicon-cog"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a style="color: #333" href="{% url 'blog.views.logout' %}">
+                                        Sign out <span class="glyphicon glyphicon-log-out"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     {% else %}
                         <a href="{% url 'blog.views.login' %}">Sign in</a>
                     {% endif %}

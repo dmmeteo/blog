@@ -1,7 +1,7 @@
 <!-- comment view -->
 {% for comment in comments %}
 	<blockquote>
-			{% if user.is_authenticated %}
+			{% if user.is_authenticated and user.is_superuser %}
 				<div style="float: right">
 					<a href="{% url 'comment_edit' pk=comment.pk %}"
 					class="btn btn-default">
