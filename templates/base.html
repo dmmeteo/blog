@@ -45,17 +45,23 @@
                     <div class="site-heading">
                         {% if post.category %}
                             <h1>{{ post.category }}</h1>
-                            <hr class="small">
-                            <span class="subheading">A simple blog by Django freamwork</span>
                         {% elif category %}
                             <h1>{{ category }}</h1>
-                            <hr class="small">
-                            <span class="subheading">A simple blog by Django freamwork</span>
                         {% else %}
                             <h1>Simple Blog</h1>
+                        {% endif %}
+                            {% if user.is_authenticated and user.is_superuser and category %}
+                                <div>
+                                    <a class="btn btn-default" style="width: 25%" href="{% url 'category_edit' pk=category.pk %}">
+                                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                                    </a>
+                                    <a class="btn btn-danger" style="width: 25%" href="{% url 'category_delete' pk=category.pk %}">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete
+                                    </a>
+                                </div>
+                            {% endif %}
                             <hr class="small">
                             <span class="subheading">A simple blog by Django freamwork</span>
-                        {% endif %}
                     </div>
                 </div>
             </div>

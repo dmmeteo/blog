@@ -1,0 +1,50 @@
+<!-- Pager -->
+<ul class="pager">
+    {% if posts.has_previous %}
+        <li class="previous">
+            {% if category %}
+                <a href="{% url 'category_list_pages' pk=category.pk page_number=posts.previous_page_number %}">
+            {% else %}
+                <a href="{% url 'post_list_pages' posts.previous_page_number %}">
+            {% endif %}
+                    &larr; Newer Posts
+                </a>
+        </li>
+    {% else %}
+        <li class="previous disabled">
+            <a href="#">&larr; Newer Posts</a>
+        </li>
+    {% endif %}
+
+    {% for page in posts.paginator.page_range %}
+        {% if page == posts.number %}
+            <li class="disabled">
+        {% else %}
+            <li>
+        {% endif %}
+            {% if category %}
+                <a href="{% url 'category_list_pages' pk=category.pk page_number=page %}">
+            {% else %}
+                <a href="{% url 'post_list_pages' page %}">
+            {% endif %}
+                    {{ page }}
+                </a>
+            </li>
+    {% endfor %}
+
+    {% if posts.has_next %}
+        <li class="next">
+            {% if category %}
+                <a href="{% url 'category_list_pages' pk=category.pk page_number=posts.next_page_number %}">
+            {% else %}
+                <a href="{% url 'post_list_pages' posts.next_page_number %}">
+            {% endif %}
+                    Older Posts &rarr;
+                </a>
+        </li>
+    {% else %}
+        <li class="next disabled">
+            <a href="#">Older Posts &rarr;</a>
+        </li>
+    {% endif %}
+</ul>

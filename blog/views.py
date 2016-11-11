@@ -3,29 +3,39 @@ from django.utils import timezone
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
+from django.core.paginator import Paginator
 from .forms import *
 from .models import *
 
 
-CATEGORIES = Category.objects.order_by('pk')
+CATEGORIES = Category.objects.all()
 
 # Create view list of posts
 @render_to('post_list.html')
-def post_list(request):
+def post_list(request, page_number=1):
     # Get post list which published_date not empty
     # and order by published_date
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-    return {'posts': posts, 'categories':CATEGORIES}
+    current_page = Paginator(posts, 3)
+    return {'posts': current_page.page(page_number), 'categories':CATEGORIES}
 
 @render_to('post_detail.html')
 def post_detail(request, pk):
     user = auth.get_user(request)
     # Get post by primary_key(pk) or 404
     post = get_object_or_404(Post, pk=pk)
+    # Get comments in post
     comments = Comment.objects.filter(post=pk).order_by('-created_date')
-    post.views += 1
     post.comments = comments.count()
-    post.save()
+    # Add views to post
+    # Create special key
+    view_pk = 'view' + str(pk)
+    if (view_pk not in request.session) or (request.session[view_pk] != pk):
+        post.views += 1
+        post.save()
+        # Set expdate to session
+        request.session.set_expiry(60*20)
+        request.session[view_pk] = pk
     #if this is a POST request need to process the form
     #create a form Comment:
     form = CommentForm(request.POST or None)
@@ -118,19 +128,20 @@ def comment_delete(request, pk):
 
 # Create view list of catgory
 @render_to('post_list.html')
-def category_list(request, pk):
+def category_list(request, pk, page_number=1):
     # Get category by pk
     category = get_object_or_404(Category, pk=pk)
     posts = Post.objects.filter(category=pk, published_date__lte=timezone.now()).order_by('-published_date')
-    return {'posts': posts, 'category': category, 'categories':CATEGORIES}
+    current_page = Paginator(posts, 3)
+    return {'posts': current_page.page(page_number), 'category': category, 'categories':CATEGORIES}
 
 @login_required()
 @render_to('category_edit.html')
 def category_new(request):
-    # try post request
+    #create a form category:
     form = CategoryForm(request.POST or None)
+    # try post request
     if request.method == 'POST':
-        #create a form category:
         #check whether it's valid:
         if form.is_valid():
             category = form.save(commit=False)
@@ -138,17 +149,39 @@ def category_new(request):
             return redirect('blog.views.category_list', pk=category.pk)
     return {'form': form, 'categories':CATEGORIES}
 
+@login_required()
+@render_to('category_edit.html')
+def category_edit(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    # try post request
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.save()
+            return redirect('blog.views.category_list', pk=pk)
+    else:
+        form = CategoryForm(instance=category)
+        return {'form': form, 'categories':CATEGORIES}
+
+@login_required()
+def category_delete(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    category.delete()
+    return redirect('/')
+
 # function for add likes
 def add_like(request, pk):
     # try Post
     post = get_object_or_404(Post, pk=pk)
+    # create special key
+    like_pk = 'like' + str(pk)
     # add like
-    if ('pause' not in request.session) or (request.session['pk'] != pk):
+    if (like_pk not in request.session) or (request.session[like_pk] != pk):
         post.likes += 1
         post.save()
         request.session.set_expiry(60*5)
-        request.session['pause'] = True
-        request.session['pk'] = pk
+        request.session[like_pk] = pk
     return redirect('blog.views.post_detail', pk=pk)
 
 # auth

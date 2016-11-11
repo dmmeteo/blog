@@ -4,10 +4,13 @@ from . import views
 urlpatterns = [
     # all posts
     url(r'^$', views.post_list, name='post_list'),
+    url(r'^page/(?P<page_number>\d+)/$', views.post_list, name='post_list_pages'),
     # category list
-    url(r'^category/(?P<pk>[0-9]+)/$', views.category_list, name='category_list'),
+    url(r'^category/(?P<pk>\d+)/$', views.category_list, name='category_list'),
+    url(r'^category/(?P<pk>\d+)/page/(?P<page_number>\d+)/$', views.category_list, name='category_list_pages'),
+
     # detail
-    url(r'^post/(?P<pk>[0-9]+)/$', views.post_detail, name='post_detail'),
+    url(r'^post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
 
     # create new post
     url(r'^post/new/$', views.post_new, name='post_new'),
@@ -15,21 +18,21 @@ urlpatterns = [
     url(r'^category/new/$', views.category_new, name='category_new'),
 
     # edit post
-    url(r'^post/(?P<pk>[0-9]+)/edit/$', views.post_edit, name='post_edit'),
+    url(r'^post/(?P<pk>\d+)/edit/$', views.post_edit, name='post_edit'),
     # edit category
-    #url(r'^category/(?P<pk>[0-9]+)/edit/$', views.category_edit, name='category_edit'),
+    url(r'^category/(?P<pk>\d+)/edit/$', views.category_edit, name='category_edit'),
     # edit comment
-    url(r'^comment/(?P<pk>[0-9]+)/edit/$', views.comment_edit, name='comment_edit'),
+    url(r'^comment/(?P<pk>\d+)/edit/$', views.comment_edit, name='comment_edit'),
 
     # delete post
-    url(r'^post/(?P<pk>[0-9]+)/delete/$', views.post_delete, name='post_delete'),
+    url(r'^post/(?P<pk>\d+)/delete/$', views.post_delete, name='post_delete'),
     # delete category
-    #url(r'^category/(?P<pk>[0-9]+)/delete/$', views.category_delete, name='category_delete'),
+    url(r'^category/(?P<pk>\d+)/delete/$', views.category_delete, name='category_delete'),
     # delete comment
-    url(r'^comment/(?P<pk>[0-9]+)/delete/$', views.comment_delete, name='comment_delete'),
+    url(r'^comment/(?P<pk>\d+)/delete/$', views.comment_delete, name='comment_delete'),
 
     # likes
-    url(r'^post/(?P<pk>[0-9]+)/like/$', views.add_like, name='add_like'),
+    url(r'^post/(?P<pk>\d+)/like/$', views.add_like, name='add_like'),
 
     # auth
     url(r'^accounts/login/', views.login, name='login'),
