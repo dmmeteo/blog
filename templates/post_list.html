@@ -10,6 +10,9 @@
                 <h3 class="post-subtitle">
                     {{ post.text }}
                 </h3>
+                    {% for tags_str in post.tags.all %}
+                        {{ tags_str }}
+                    {% endfor %}
             </a>
             <p class="post-meta">
                 <a href="{% url 'category_list' pk=post.category.id %}">{{ post.category }}:</a>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Post, Comment
+from .models import Category, Post, Tag, Comment
 
 # class for category in admin
 class CategoryAdmin(admin.ModelAdmin):
@@ -16,7 +16,7 @@ class PostInline(admin.StackedInline):
 
 # class for views fields in admin
 class PostAdmin(admin.ModelAdmin):
-	fields = ['category', 'author', 'title', 'text', 'created_date', 'published_date']
+	fields = ['category', 'author', 'tags', 'title', 'text', 'created_date', 'published_date']
 	inlines = [PostInline]
 	list_filter = ['created_date']
 
@@ -24,3 +24,4 @@ class PostAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Tag)

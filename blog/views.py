@@ -17,13 +17,15 @@ def post_list(request, page_number=1):
     # and order by published_date
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
-    return {'posts': current_page.page(page_number), 'categories':CATEGORIES}
+    return {'posts': current_page.page(page_number),
+            'categories':CATEGORIES}
 
 @render_to('post_detail.html')
 def post_detail(request, pk):
     user = auth.get_user(request)
     # Get post by primary_key(pk) or 404
     post = get_object_or_404(Post, pk=pk)
+    tags = post.tags.all()
     # Get comments in post
     comments = Comment.objects.filter(post=pk).order_by('-created_date')
     post.comments = comments.count()
@@ -53,7 +55,8 @@ def post_detail(request, pk):
             comment.post = post
             comment.save()
             return redirect('blog.views.post_detail', pk=pk)
-    return {'post': post,
+    return {'tags': tags,
+            'post': post,
             'comments': comments,
             'form': form,
             'categories':CATEGORIES}
@@ -87,6 +90,8 @@ def post_edit(request, pk):
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
+            print request.POST['title']
+            print request.POST['tags']
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()

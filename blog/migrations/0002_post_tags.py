@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='category',
-            name='discript',
-            field=models.TextField(null=True, blank=True),
+        migrations.AddField(
+            model_name='post',
+            name='tags',
+            field=models.ManyToManyField(to='blog.Tag', blank=True),
         ),
     ]

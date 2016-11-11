@@ -16,6 +16,10 @@
             {% endif %}
             {{ post.title }}
         </h4>
+        {% for tags_str in tags %}
+            {{ tags_str }}
+        {% endfor %}
+
         <p>{{ post.text }}</p>
         {% if post.published_date %}
             <p class="post-meta"  style="float: left; margin-top: 20px">
