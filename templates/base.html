@@ -38,15 +38,17 @@
 
 	<!-- Page Header -->
 	<!-- Set your background image for this header on the line below. -->
+    {% if tag %}
+    <header class="intro-header" style="background-image: url('{% static 'img/contact-bg.jpg' %}')">
+    {% else %}
     <header class="intro-header" style="background-image: url('{% static 'img/home-bg.jpg' %}')">
+    {% endif %}
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="site-heading">
-                        {% if post.category %}
-                            <h1>{{ post.category }}</h1>
-                        {% elif category %}
-                            <h1>{{ category }}</h1>
+                        {% if post.category or category or tag %}
+                            <h1>{{ post.category }}{{ category }}{{ tag }}</h1>
                         {% else %}
                             <h1>Simple Blog</h1>
                         {% endif %}

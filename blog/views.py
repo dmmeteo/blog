@@ -90,9 +90,11 @@ def post_edit(request, pk):
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            print request.POST['title']
-            print request.POST['tags']
             post = form.save(commit=False)
+            # Clear tags dict
+            post.tags.clear()
+            # add new dict to m2m field
+            post.tags = dict(request.POST)['tags']
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
@@ -107,6 +109,15 @@ def post_delete(request, pk):
     category = post.category.id
     post.delete()
     return redirect('blog.views.category_list', pk=category)
+
+# Create view list by tag
+@render_to('post_list.html')
+def tag_list(request, pk, page_number=1):
+    # Get category by pk
+    tag = get_object_or_404(Tag, pk=pk)
+    posts = Post.objects.filter(tags=pk, published_date__lte=timezone.now()).order_by('-published_date')
+    current_page = Paginator(posts, 3)
+    return {'posts': current_page.page(page_number), 'tag': tag, 'categories':CATEGORIES}
 
 # Create views for comments
 @login_required()

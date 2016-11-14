@@ -8,6 +8,9 @@ urlpatterns = [
     # category list
     url(r'^category/(?P<pk>\d+)/$', views.category_list, name='category_list'),
     url(r'^category/(?P<pk>\d+)/page/(?P<page_number>\d+)/$', views.category_list, name='category_list_pages'),
+    # tag list
+    url(r'^tag/(?P<pk>\d+)/$', views.tag_list, name='tag_list'),
+    url(r'^tag/(?P<pk>\d+)/page/(?P<page_number>\d+)/$', views.tag_list, name='tag_list'),
 
     # detail
     url(r'^post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),

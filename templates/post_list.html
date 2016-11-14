@@ -10,10 +10,12 @@
                 <h3 class="post-subtitle">
                     {{ post.text }}
                 </h3>
-                    {% for tags_str in post.tags.all %}
-                        {{ tags_str }}
-                    {% endfor %}
             </a>
+            <div>
+                {% for tags_str in post.tags.all %}
+                    <a class="btn btn-default" href="{% url 'tag_list' pk=tags_str.id %}">{{ tags_str }}</a>
+                {% endfor %}
+            </div>
             <p class="post-meta">
                 <a href="{% url 'category_list' pk=post.category.id %}">{{ post.category }}:</a>
                 Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}
