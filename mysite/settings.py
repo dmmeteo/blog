@@ -26,9 +26,8 @@ SECRET_KEY = 'g6wz-b0oap*eykisbl=s+)d7h@)ed@+_22bv2zjfot$x@zyjq^'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
+    'dmmeteo.pythonanywhere.com'
 ]
-
 
 # Application definition
 

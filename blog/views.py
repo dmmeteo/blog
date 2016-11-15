@@ -4,11 +4,9 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
 from django.core.paginator import Paginator
-from .forms import *
-from .models import *
+from .forms import CategoryForm, PostForm, CommentForm, LoginForm, RegisterForm, PassChangeForm
+from .models import Category, Tag, Post, Comment
 
-
-CATEGORIES = Category.objects.all()
 
 # Create view list of posts
 @render_to('post_list.html')
@@ -18,7 +16,7 @@ def post_list(request, page_number=1):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
     return {'posts': current_page.page(page_number),
-            'categories':CATEGORIES}
+            'categories':Category.objects.all()}
 
 @render_to('post_detail.html')
 def post_detail(request, pk):
@@ -59,7 +57,7 @@ def post_detail(request, pk):
             'post': post,
             'comments': comments,
             'form': form,
-            'categories':CATEGORIES}
+            'categories':Category.objects.all()}
 
 @login_required()
 @render_to('post_edit.html')
@@ -80,7 +78,7 @@ def post_new(request):
         #if a GET (or any other method) create a blank form
         form = PostForm()
     return {'form': form,
-            'categories':CATEGORIES}
+            'categories':Category.objects.all()}
 
 @login_required()
 @render_to('post_edit.html')
@@ -101,7 +99,7 @@ def post_edit(request, pk):
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
-        return {'form': form, 'categories':CATEGORIES}
+        return {'form': form, 'categories':Category.objects.all()}
 
 @login_required()
 def post_delete(request, pk):
@@ -117,7 +115,7 @@ def tag_list(request, pk, page_number=1):
     tag = get_object_or_404(Tag, pk=pk)
     posts = Post.objects.filter(tags=pk, published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
-    return {'posts': current_page.page(page_number), 'tag': tag, 'categories':CATEGORIES}
+    return {'posts': current_page.page(page_number), 'tag': tag, 'categories':Category.objects.all()}
 
 # Create views for comments
 @login_required()
@@ -133,7 +131,7 @@ def comment_edit(request, pk):
             return redirect('blog.views.post_detail', pk=comment.post.id)
     else:
         form = CommentForm(instance=comment)
-        return {'form': form, 'categories':CATEGORIES}
+        return {'form': form, 'categories':Category.objects.all()}
 
 @login_required()
 def comment_delete(request, pk):
@@ -149,7 +147,7 @@ def category_list(request, pk, page_number=1):
     category = get_object_or_404(Category, pk=pk)
     posts = Post.objects.filter(category=pk, published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
-    return {'posts': current_page.page(page_number), 'category': category, 'categories':CATEGORIES}
+    return {'posts': current_page.page(page_number), 'category': category, 'categories':Category.objects.all()}
 
 @login_required()
 @render_to('category_edit.html')
@@ -163,7 +161,7 @@ def category_new(request):
             category = form.save(commit=False)
             category.save()
             return redirect('blog.views.category_list', pk=category.pk)
-    return {'form': form, 'categories':CATEGORIES}
+    return {'form': form, 'categories':Category.objects.all()}
 
 @login_required()
 @render_to('category_edit.html')
@@ -178,7 +176,7 @@ def category_edit(request, pk):
             return redirect('blog.views.category_list', pk=pk)
     else:
         form = CategoryForm(instance=category)
-        return {'form': form, 'categories':CATEGORIES}
+        return {'form': form, 'categories':Category.objects.all()}
 
 @login_required()
 def category_delete(request, pk):
@@ -216,11 +214,11 @@ def login(request):
                 return redirect('/')
             else:
                 auth_error = 'User is not defined'
-                return {'form':form, 'auth_error': auth_error, 'categories':CATEGORIES}
+                return {'form':form, 'auth_error': auth_error, 'categories':Category.objects.all()}
         else:
-            return {'form':form, 'categories':CATEGORIES}
+            return {'form':form, 'categories':Category.objects.all()}
     else:
-        return {'form':form, 'categories':CATEGORIES}
+        return {'form':form, 'categories':Category.objects.all()}
 
 @render_to('register.html')
 def register(request):
@@ -232,7 +230,7 @@ def register(request):
                                      password=request.POST['password'])
             auth.login(request, user)
             return redirect('/')
-    return {'form': form, 'categories':CATEGORIES}
+    return {'form': form, 'categories':Category.objects.all()}
 
 @login_required()
 @render_to('password_change.html')
@@ -242,10 +240,10 @@ def password_change(request):
         if form.is_valid():
             form.save()
             message_success = True
-            return {'message_success': message_success, 'categories':CATEGORIES}
+            return {'message_success': message_success, 'categories':Category.objects.all()}
         else:
-            return {'form': form, 'categories':CATEGORIES}
-    return {'form': form, 'categories':CATEGORIES}
+            return {'form': form, 'categories':Category.objects.all()}
+    return {'form': form, 'categories':Category.objects.all()}
 
 def logout(request):
     auth.logout(request)
