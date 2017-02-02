@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from annoying.decorators import render_to
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from annoying.decorators import render_to
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+
 from .forms import CategoryForm, PostForm, CommentForm, LoginForm, RegisterForm, PassChangeForm
 from .models import Category, Tag, Post, Comment
 
@@ -16,7 +17,8 @@ def post_list(request, page_number=1):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
     return {'posts': current_page.page(page_number),
-            'categories':Category.objects.all()}
+            'categories': Category.objects.all()}
+
 
 @render_to('post_detail.html')
 def post_detail(request, pk):
@@ -34,13 +36,13 @@ def post_detail(request, pk):
         post.views += 1
         post.save()
         # Set expdate to session
-        request.session.set_expiry(60*20)
+        request.session.set_expiry(60 * 20)
         request.session[view_pk] = pk
-    #if this is a POST request need to process the form
-    #create a form Comment:
+    # if this is a POST request need to process the form
+    # create a form Comment:
     form = CommentForm(request.POST or None)
     if request.method == 'POST':
-        #check valid:
+        # check valid:
         if form.is_valid():
             comment = form.save(commit=False)
             # user is auth
@@ -57,17 +59,18 @@ def post_detail(request, pk):
             'post': post,
             'comments': comments,
             'form': form,
-            'categories':Category.objects.all()}
+            'categories': Category.objects.all()}
+
 
 @login_required()
 @render_to('post_edit.html')
 def post_new(request):
     # Create form to add new posts
-    #if this is a POST request need to process the form
+    # if this is a POST request need to process the form
     if request.method == 'POST':
-        #create a form post:
+        # create a form post:
         form = PostForm(request.POST)
-        #check whether it's valid:
+        # check whether it's valid:
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -75,10 +78,11 @@ def post_new(request):
             post.save()
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
-        #if a GET (or any other method) create a blank form
+        # if a GET (or any other method) create a blank form
         form = PostForm()
     return {'form': form,
-            'categories':Category.objects.all()}
+            'categories': Category.objects.all()}
+
 
 @login_required()
 @render_to('post_edit.html')
@@ -99,7 +103,8 @@ def post_edit(request, pk):
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
-        return {'form': form, 'categories':Category.objects.all()}
+        return {'form': form, 'categories': Category.objects.all()}
+
 
 @login_required()
 def post_delete(request, pk):
@@ -108,6 +113,7 @@ def post_delete(request, pk):
     post.delete()
     return redirect('blog.views.category_list', pk=category)
 
+
 # Create view list by tag
 @render_to('post_list.html')
 def tag_list(request, pk, page_number=1):
@@ -115,7 +121,8 @@ def tag_list(request, pk, page_number=1):
     tag = get_object_or_404(Tag, pk=pk)
     posts = Post.objects.filter(tags=pk, published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
-    return {'posts': current_page.page(page_number), 'tag': tag, 'categories':Category.objects.all()}
+    return {'posts': current_page.page(page_number), 'tag': tag, 'categories': Category.objects.all()}
+
 
 # Create views for comments
 @login_required()
@@ -131,7 +138,8 @@ def comment_edit(request, pk):
             return redirect('blog.views.post_detail', pk=comment.post.id)
     else:
         form = CommentForm(instance=comment)
-        return {'form': form, 'categories':Category.objects.all()}
+        return {'form': form, 'categories': Category.objects.all()}
+
 
 @login_required()
 def comment_delete(request, pk):
@@ -140,6 +148,7 @@ def comment_delete(request, pk):
     comment.delete()
     return redirect('blog.views.post_detail', pk=post)
 
+
 # Create view list of catgory
 @render_to('post_list.html')
 def category_list(request, pk, page_number=1):
@@ -147,21 +156,23 @@ def category_list(request, pk, page_number=1):
     category = get_object_or_404(Category, pk=pk)
     posts = Post.objects.filter(category=pk, published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
-    return {'posts': current_page.page(page_number), 'category': category, 'categories':Category.objects.all()}
+    return {'posts': current_page.page(page_number), 'category': category, 'categories': Category.objects.all()}
+
 
 @login_required()
 @render_to('category_edit.html')
 def category_new(request):
-    #create a form category:
+    # create a form category:
     form = CategoryForm(request.POST or None)
     # try post request
     if request.method == 'POST':
-        #check whether it's valid:
+        # check whether it's valid:
         if form.is_valid():
             category = form.save(commit=False)
             category.save()
             return redirect('blog.views.category_list', pk=category.pk)
-    return {'form': form, 'categories':Category.objects.all()}
+    return {'form': form, 'categories': Category.objects.all()}
+
 
 @login_required()
 @render_to('category_edit.html')
@@ -176,13 +187,15 @@ def category_edit(request, pk):
             return redirect('blog.views.category_list', pk=pk)
     else:
         form = CategoryForm(instance=category)
-        return {'form': form, 'categories':Category.objects.all()}
+        return {'form': form, 'categories': Category.objects.all()}
+
 
 @login_required()
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     return redirect('/')
+
 
 # function for add likes
 def add_like(request, pk):
@@ -194,9 +207,10 @@ def add_like(request, pk):
     if (like_pk not in request.session) or (request.session[like_pk] != pk):
         post.likes += 1
         post.save()
-        request.session.set_expiry(60*5)
+        request.session.set_expiry(60 * 5)
         request.session[like_pk] = pk
     return redirect('blog.views.post_detail', pk=pk)
+
 
 # auth
 @render_to('login.html')
@@ -214,11 +228,12 @@ def login(request):
                 return redirect('/')
             else:
                 auth_error = 'User is not defined'
-                return {'form':form, 'auth_error': auth_error, 'categories':Category.objects.all()}
+                return {'form': form, 'auth_error': auth_error, 'categories': Category.objects.all()}
         else:
-            return {'form':form, 'categories':Category.objects.all()}
+            return {'form': form, 'categories': Category.objects.all()}
     else:
-        return {'form':form, 'categories':Category.objects.all()}
+        return {'form': form, 'categories': Category.objects.all()}
+
 
 @render_to('register.html')
 def register(request):
@@ -230,7 +245,8 @@ def register(request):
                                      password=request.POST['password'])
             auth.login(request, user)
             return redirect('/')
-    return {'form': form, 'categories':Category.objects.all()}
+    return {'form': form, 'categories': Category.objects.all()}
+
 
 @login_required()
 @render_to('password_change.html')
@@ -240,10 +256,11 @@ def password_change(request):
         if form.is_valid():
             form.save()
             message_success = True
-            return {'message_success': message_success, 'categories':Category.objects.all()}
+            return {'message_success': message_success, 'categories': Category.objects.all()}
         else:
-            return {'form': form, 'categories':Category.objects.all()}
-    return {'form': form, 'categories':Category.objects.all()}
+            return {'form': form, 'categories': Category.objects.all()}
+    return {'form': form, 'categories': Category.objects.all()}
+
 
 def logout(request):
     auth.logout(request)

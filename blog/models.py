@@ -1,22 +1,26 @@
 from django.db import models
 from django.utils import timezone
 
+
 # Create model Category
 class Category(models.Model):
     # create fields
     title = models.CharField(max_length=200)
     discript = models.TextField(blank=True, null=True)
+
     # file = FileField()
 
     # return string title
     def __str__(self):
         return self.title
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return self.name
+
 
 # Create models Post
 class Post(models.Model):
@@ -54,4 +58,3 @@ class Comment(models.Model):
     # return string text
     def __str__(self):
         return self.text
-
