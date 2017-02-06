@@ -26,9 +26,9 @@ class Tag(models.Model):
 class Post(models.Model):
     # create fields
     author = models.ForeignKey('auth.User', default='auth.User')
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, default=2)
     title = models.CharField(max_length=200)
-    text = models.TextField()
+    text = models.TextField(null=True)
     likes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)

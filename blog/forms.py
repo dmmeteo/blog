@@ -3,6 +3,7 @@ from .models import Category, Post, Comment
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 
+
 # TODO use clean data
 # Create Category form
 class CategoryForm(forms.ModelForm):
@@ -17,6 +18,12 @@ class CategoryForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Comment'}),
         }
 
+    def clean(self):
+        data = self.cleaned_data
+        if data['title'].isdigit():
+            self.add_error('title', forms.ValidationError('Title must be a string'))
+        return data
+
 
 # Create Post form
 class PostForm(forms.ModelForm):
@@ -28,12 +35,22 @@ class PostForm(forms.ModelForm):
             'category': forms.Select(
                 attrs={'class': 'form-control'}),
             'tags': forms.SelectMultiple(
-                attrs={'class': 'form-control'}),
+                attrs={'id': 'select-tags'}),
             'title': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Category name'}),
             'text': forms.Textarea(
                 attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Discription'}),
         }
+
+    def clean(self):
+        data = self.cleaned_data
+        if len(data['tags']) == 0:
+            self.add_error('tags', forms.ValidationError('Choise some tag'))
+        if data['title'].isdigit() or data['title'] == '':
+            self.add_error('title', forms.ValidationError('Title must be a string'))
+        if data['text'] == '':
+            self.add_error('text', forms.ValidationError('Post must be not empty and be string'))
+        return data
 
 
 # Create Comment form
@@ -51,6 +68,11 @@ class CommentForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Comment'}),
         }
 
+    def clean(self):
+        data = self.cleaned_data
+        if data['author'] == '':
+            data['author'] = 'anonymous'
+        return data
 
 # Create auth
 class LoginForm(forms.Form):
@@ -62,7 +84,8 @@ class LoginForm(forms.Form):
 
 class RegisterForm(UserCreationForm):
     password1 = forms.CharField(label=("Password"),
-                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+                                widget=forms.PasswordInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Password'}))
     password2 = forms.CharField(label=("Password confirmation"),
                                 widget=forms.PasswordInput(
                                     attrs={'class': 'form-control', 'placeholder': 'Password again'}))
@@ -88,3 +111,4 @@ class PassChangeForm(PasswordChangeForm):
 
     class Meta:
         model = User
+        fields = ['old_password', 'new_password1', 'new_password2']

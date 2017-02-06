@@ -21,7 +21,7 @@
                 <a class="btn btn-default" href="{% url 'tag_list' pk=tags_str.id %}">{{ tags_str }}</a>
             {% endfor %}
         </div>
-        <p>{{ post.text }}</p>
+        <p>{{ post.text|removetags:'script'|safe }}</p>
         {% if post.published_date %}
             <p class="post-meta"  style="float: left; margin-top: 20px">
                 Posted by <a href="#">{{ post.author }}</a> on {{ post.published_date }}

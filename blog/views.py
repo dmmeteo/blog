@@ -23,35 +23,28 @@ def post_list(request, page_number=1):
 @render_to('post_detail.html')
 def post_detail(request, pk):
     user = auth.get_user(request)
-    # Get post by primary_key(pk) or 404
     post = get_object_or_404(Post, pk=pk)
     tags = post.tags.all()
-    # Get comments in post
     comments = Comment.objects.filter(post=pk).order_by('-created_date')
     post.comments = comments.count()
-    # Add views to post
-    # Create special key
     view_pk = 'view' + str(pk)
+
     if (view_pk not in request.session) or (request.session[view_pk] != pk):
         post.views += 1
         post.save()
         # Set expdate to session
         request.session.set_expiry(60 * 20)
         request.session[view_pk] = pk
-    # if this is a POST request need to process the form
+
     # create a form Comment:
     form = CommentForm(request.POST or None)
     if request.method == 'POST':
-        # check valid:
         if form.is_valid():
             comment = form.save(commit=False)
             # user is auth
             if user.is_authenticated():
                 comment.author = user.username
                 comment.email = user.email
-            # user not enter Name
-            elif comment.author == '':
-                comment.author = 'anonymous'
             comment.post = post
             comment.save()
             return redirect('blog.views.post_detail', pk=pk)
@@ -63,47 +56,26 @@ def post_detail(request, pk):
 
 
 @login_required()
-@render_to('post_edit.html')
-def post_new(request):
-    # Create form to add new posts
-    # if this is a POST request need to process the form
-    if request.method == 'POST':
-        # create a form post:
-        form = PostForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('blog.views.post_detail', pk=post.pk)
+@render_to('post_add.html')
+def post_add(request, pk=None):
+    if pk:
+        post = get_object_or_404(Post, pk=pk)
+        form = PostForm(request.POST or None, instance=post)
     else:
-        # if a GET (or any other method) create a blank form
-        form = PostForm()
-    return {'form': form,
-            'categories': Category.objects.all()}
+        form = PostForm(request.POST or None)
 
+    if request.method == 'POST' and form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.published_date = timezone.now()
+        post.save()
 
-@login_required()
-@render_to('post_edit.html')
-def post_edit(request, pk):
-    # Create form to edit post
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            # Clear tags dict
-            post.tags.clear()
-            # add new dict to m2m field
-            post.tags = dict(request.POST)['tags']
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('blog.views.post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
-        return {'form': form, 'categories': Category.objects.all()}
+        # update post if pk is None
+        post.tags = form.cleaned_data['tags']
+        post.save()
+        return redirect('blog.views.post_detail', pk=post.pk)
+
+    return {'form': form, 'categories': Category.objects.all()}
 
 
 @login_required()
@@ -168,8 +140,7 @@ def category_new(request):
     if request.method == 'POST':
         # check whether it's valid:
         if form.is_valid():
-            category = form.save(commit=False)
-            category.save()
+            category = form.save()
             return redirect('blog.views.category_list', pk=category.pk)
     return {'form': form, 'categories': Category.objects.all()}
 
@@ -192,6 +163,7 @@ def category_edit(request, pk):
 
 @login_required()
 def category_delete(request, pk):
+    # TODO if delete some category - her posts change category "Without category"
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     return redirect('/')

@@ -34,7 +34,7 @@
                     <!-- create new category -->
                         {% if user.is_authenticated and user.is_superuser %}
                             <li role="separator" class="divider"></li>
-                            <li><a style="color: #333" href="{% url 'blog.views.category_new' %}"><span class="glyphicon glyphicon-plus"></span> New Category</a></li>
+                            <li><a style="color: #333" href="{% url 'category_new' %}"><span class="glyphicon glyphicon-plus"></span> New Category</a></li>
                         {% endif %}
 
                     </ul>
@@ -42,7 +42,7 @@
                 <!-- add new post link -->
                 {% if user.is_authenticated and user.is_superuser %}
                     <li>
-                        <a href="{% url 'blog.views.post_new' %}">New Post</a>
+                        <a href="{% url 'post_new' %}">New Post</a>
                     </li>
                 {% endif %}
                 <li>
@@ -54,19 +54,19 @@
                             <ul class="dropdown-menu">
                             <!-- user options -->
                                 <li>
-                                    <a style="color: #333" href="{% url 'blog.views.password_change' %}">
+                                    <a style="color: #333" href="{% url 'password_change' %}">
                                         Change password <span class="glyphicon glyphicon-cog"></span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a style="color: #333" href="{% url 'blog.views.logout' %}">
+                                    <a style="color: #333" href="{% url 'logout' %}">
                                         Sign out <span class="glyphicon glyphicon-log-out"></span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
                     {% else %}
-                        <a href="{% url 'blog.views.login' %}">Sign in</a>
+                        <a href="{% url 'login' %}">Sign in</a>
                     {% endif %}
                 </li>
             </ul>
