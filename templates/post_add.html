@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load selectize_tags %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
 	<p>Add new post or edit old:</p>
 	<form method="POST" class="post-form">
         {% selectize_tags_media 'css' %}
 		    {% csrf_token %}
-		    {{ form.as_p }}
+		    {{ form }}
         {% selectize_tags_media 'js' 'jquery' %}
 		<div class="row">
 			<div class="form-group col-xs-12">
@@ -16,7 +16,7 @@
 		</div>
 	</form>
     <script>
-        $('#select-tags').selectize({
+        $('#select-tags').removeClass('form-control').selectize({
             delimiter: ',',
             persist: false,
             create: function (input) {

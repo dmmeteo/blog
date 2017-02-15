@@ -4,7 +4,6 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 
 
-# TODO use clean data
 # Create Category form
 class CategoryForm(forms.ModelForm):
     # create fields
@@ -44,8 +43,10 @@ class PostForm(forms.ModelForm):
 
     def clean(self):
         data = self.cleaned_data
-        if len(data['tags']) == 0:
-            self.add_error('tags', forms.ValidationError('Choise some tag'))
+        try:
+            data['tags']
+        except KeyError:
+            data['tags'] = ''
         if data['title'].isdigit() or data['title'] == '':
             self.add_error('title', forms.ValidationError('Title must be a string'))
         if data['text'] == '':
@@ -73,6 +74,7 @@ class CommentForm(forms.ModelForm):
         if data['author'] == '':
             data['author'] = 'anonymous'
         return data
+
 
 # Create auth
 class LoginForm(forms.Form):

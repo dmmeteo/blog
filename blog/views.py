@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 
+
 from .forms import CategoryForm, PostForm, CommentForm, LoginForm, RegisterForm, PassChangeForm
 from .models import Category, Tag, Post, Comment
 
@@ -17,7 +18,8 @@ def post_list(request, page_number=1):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     current_page = Paginator(posts, 3)
     return {'posts': current_page.page(page_number),
-            'categories': Category.objects.all()}
+            'categories': Category.objects.all(),
+            'tags': Tag.objects.all()}
 
 
 @render_to('post_detail.html')
@@ -64,17 +66,25 @@ def post_add(request, pk=None):
     else:
         form = PostForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        post = form.save(commit=False)
-        post.author = request.user
-        post.published_date = timezone.now()
-        post.save()
+    if request.method == 'POST':
+        new_tags = request.POST.getlist('tags')
+        for tag in new_tags:
+            try:
+                Tag.objects.get(id=tag)
+            except (ValueError, Tag.DoesNotExist):
+                new_tag = Tag(name=tag)
+                new_tag.save()
+                new_tags[new_tags.index(tag)] = str(new_tag.pk)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.published_date = timezone.now()
+            post.save()
 
-        # update post if pk is None
-        post.tags = form.cleaned_data['tags']
-        post.save()
-        return redirect('blog.views.post_detail', pk=post.pk)
-
+            # update post if pk is None
+            post.tags = new_tags
+            post.save()
+            return redirect('blog.views.post_detail', pk=post.pk)
     return {'form': form, 'categories': Category.objects.all()}
 
 
@@ -100,17 +110,14 @@ def tag_list(request, pk, page_number=1):
 @login_required()
 @render_to('comment_edit.html')
 def comment_edit(request, pk):
-    # Create form to edit comment
     comment = get_object_or_404(Comment, pk=pk)
+    form = CommentForm(request.POST or None, instance=comment)
     if request.method == 'POST':
-        form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.save()
             return redirect('blog.views.post_detail', pk=comment.post.id)
-    else:
-        form = CommentForm(instance=comment)
-        return {'form': form, 'categories': Category.objects.all()}
+    return {'form': form, 'categories': Category.objects.all()}
 
 
 @login_required()
@@ -132,33 +139,19 @@ def category_list(request, pk, page_number=1):
 
 
 @login_required()
-@render_to('category_edit.html')
-def category_new(request):
-    # create a form category:
-    form = CategoryForm(request.POST or None)
-    # try post request
-    if request.method == 'POST':
-        # check whether it's valid:
-        if form.is_valid():
-            category = form.save()
-            return redirect('blog.views.category_list', pk=category.pk)
-    return {'form': form, 'categories': Category.objects.all()}
-
-
-@login_required()
-@render_to('category_edit.html')
-def category_edit(request, pk):
-    category = get_object_or_404(Category, pk=pk)
-    # try post request
-    if request.method == 'POST':
-        form = CategoryForm(request.POST, instance=category)
-        if form.is_valid():
-            category = form.save(commit=False)
-            category.save()
-            return redirect('blog.views.category_list', pk=pk)
+@render_to('category_add.html')
+def category_add(request, pk=None):
+    if pk:
+        category = get_object_or_404(Category, pk=pk)
+        form = CategoryForm(request.POST or None, instance=category)
     else:
-        form = CategoryForm(instance=category)
-        return {'form': form, 'categories': Category.objects.all()}
+        form = CategoryForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        category = form.save()
+        return redirect('blog.views.category_list', pk=category.pk)
+
+    return {'form': form, 'categories': Category.objects.all()}
 
 
 @login_required()

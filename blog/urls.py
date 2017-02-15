@@ -23,9 +23,9 @@ urlpatterns = [
     url(r'^post/(?P<pk>\d+)/delete/$', views.post_delete, name='post_delete'),
 
     # create new category
-    url(r'^category/new/$', views.category_new, name='category_new'),
+    url(r'^category/new/$', views.category_add, name='category_new'),
     # edit category
-    url(r'^category/(?P<pk>\d+)/edit/$', views.category_edit, name='category_edit'),
+    url(r'^category/(?P<pk>\d+)/edit/$', views.category_add, name='category_edit'),
     # delete category
     url(r'^category/(?P<pk>\d+)/delete/$', views.category_delete, name='category_delete'),
 
