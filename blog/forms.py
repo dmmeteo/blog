@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 # Create Category form
 class CategoryForm(forms.ModelForm):
+
     # create fields
     class Meta:
         model = Category
