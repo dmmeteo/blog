@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'crispy_forms',
     'selectize',
+    'requests',
     'blog',
     'sender',
 )
@@ -107,3 +108,14 @@ STATICFILES_DIRS = [
 
 # Crispy forms settings.
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# sms notify parameters
+SMS = {
+    'domain': 'https://api.bulkness.com/',
+    'api_send': 'message/send/',
+    'api_status': 'message/status/',
+    'api_balance': 'balance/',
+    'api_credit': 'credit/',
+    'username': '',
+    'api_key': '',
+}

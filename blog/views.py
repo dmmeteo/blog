@@ -11,7 +11,7 @@ from .models import Category, Tag, Post, Comment
 
 
 # Create view list of posts
-@render_to('post_list.html')
+@render_to('blog/post_list.html')
 def post_list(request, page_number=1):
     # Get post list which published_date not empty
     # and order by published_date
@@ -22,7 +22,7 @@ def post_list(request, page_number=1):
             'tags': Tag.objects.all()}
 
 
-@render_to('post_detail.html')
+@render_to('blog/post_detail.html')
 def post_detail(request, pk):
     user = auth.get_user(request)
     post = get_object_or_404(Post, pk=pk)
@@ -58,7 +58,7 @@ def post_detail(request, pk):
 
 
 @login_required()
-@render_to('post_add.html')
+@render_to('blog/post_add.html')
 def post_add(request, pk=None):
     if pk:
         post = get_object_or_404(Post, pk=pk)
@@ -97,7 +97,7 @@ def post_delete(request, pk):
 
 
 # Create view list by tag
-@render_to('post_list.html')
+@render_to('blog/post_list.html')
 def tag_list(request, pk, page_number=1):
     # Get category by pk
     tag = get_object_or_404(Tag, pk=pk)
@@ -108,7 +108,7 @@ def tag_list(request, pk, page_number=1):
 
 # Create views for comments
 @login_required()
-@render_to('comment_edit.html')
+@render_to('blog/comment_edit.html')
 def comment_edit(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     form = CommentForm(request.POST or None, instance=comment)
@@ -129,7 +129,7 @@ def comment_delete(request, pk):
 
 
 # Create view list of catgory
-@render_to('post_list.html')
+@render_to('blog/post_list.html')
 def category_list(request, pk, page_number=1):
     # Get category by pk
     category = get_object_or_404(Category, pk=pk)
@@ -139,7 +139,7 @@ def category_list(request, pk, page_number=1):
 
 
 @login_required()
-@render_to('category_add.html')
+@render_to('blog/category_add.html')
 def category_add(request, pk=None):
     if pk:
         category = get_object_or_404(Category, pk=pk)
@@ -178,7 +178,7 @@ def add_like(request, pk):
 
 
 # auth
-@render_to('login.html')
+@render_to('blog/login.html')
 def login(request):
     # create form
     form = LoginForm(request.POST or None)
@@ -200,7 +200,7 @@ def login(request):
         return {'form': form, 'categories': Category.objects.all()}
 
 
-@render_to('register.html')
+@render_to('blog/register.html')
 def register(request):
     form = RegisterForm(request.POST or None)
     if request.method == 'POST':
@@ -214,7 +214,7 @@ def register(request):
 
 
 @login_required()
-@render_to('password_change.html')
+@render_to('blog/password_change.html')
 def password_change(request):
     form = PassChangeForm(user=request.user, data=request.POST or None)
     if request.method == 'POST':
