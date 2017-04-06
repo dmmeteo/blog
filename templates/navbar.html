@@ -21,9 +21,22 @@
                 <li>
                     <a href="{% url 'post_list' %}">Home</a>
                 </li>
-                <li>
-                    <a href="{% url 'send_sms_message' %}">Send SMS</a>
-                </li>
+                {% if user.is_authenticated and user.is_superuser %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">SMS <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+
+                            <!-- send sms message -->
+                            <li>
+                                <a style="color: #333" href="{% url 'send_sms_message' %}">Send SMS</a>
+                            </li>
+                            <!-- sms messages report -->
+                            <li>
+                                <a style="color: #333" href="{% url 'send_sms_message' %}">SMS Report</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Category <span class="caret"></span></a>
                     <ul class="dropdown-menu">
